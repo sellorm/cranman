@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+"""
+A small tool to manage a cran-like repo
+written to target python 2.7.5 initially
+"""
+
+import os
+import sys
+import re
+
+R = "/opt/R/3.5.3/bin/R"
+
+try:
+    REPO_DIR = sys.argv[1]
+except IndexError:
+    print("Usage: " + sys.argv[0] + " <repo_directory>")
+    sys.exit(1)
+
+
+if not os.path.isdir(REPO_DIR):
+    print("Error: directory not found - " + REPO_DIR)
+    sys.exit(1)
+
+try:
+    os.mkdir(REPO_DIR + "/Archive")
+    print("Directory created: Archive")
+except OSError:
+    print("Directory exists: Archive")
+
+FILES = os.listdir(REPO_DIR)
+RGX = re.compile(r"^.*\.tar\.gz$")
+PKGS = filter(RGX.match, FILES)
+PKGNAMES = [re.sub(r"_.*\.tar\.gz$", "", pkg) for pkg in PKGS]
+
+for pkg in PKGNAMES:
+    print(pkg)
+    try:
+        print("symlink: " + pkg)
+        os.symlink("..", REPO_DIR + "/Archive/" + pkg)
+    except OSError:
+        print("Symlink already exists: " + pkg)
+
+CMD = R + " --silent -e 'tools::write_PACKAGES(dir = \"" + REPO_DIR + "\", type = \"source\")'"
+
+os.system(CMD)
