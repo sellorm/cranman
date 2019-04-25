@@ -89,3 +89,9 @@ If you want to use port 1234 you'll need to let SELinux know:
 ```
 semanage port -m -t http_port_t -p tcp 1234
 ```
+
+# License
+
+MIT License
+
+Copyright (c) 2019 Mark Sellors
