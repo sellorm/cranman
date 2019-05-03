@@ -18,6 +18,31 @@ $ cranman /srv/cran/cranroot
 
 Configure R to use `http://servername:1234` as a CRAN-like repository.
 
+If you're going to use it as your main CRAN-like repository -- in place of the public CRAN -- then you need to create an Rprofile.site that looks something like this:
+
+```
+## Default repo
+local({r <- getOption("repos"),
+       r["CRAN"] <- "http://REPLACE_WITH_SERVNAME:1234",
+       options(repos=r)
+})
+```
+
+If, however, you're using the cranman repo as a secondary REPO, the Rprofile.site should look similar to this:
+
+```
+## Default repo
+local({r <- getOption("repos"),
+       r["CRAN"] <- "https://cran.rstudio.com",
+       r["CRANMAN"] <- "http://REPLACE_WITH_SERVERNAME:1234",
+       options(repos=r)
+})
+```
+
+
+
+
+
 # Installation
 
 ## Install cranman
@@ -38,7 +63,7 @@ Copy the `cranman` file to `/usr/local/bin` and make sure it's executable.
 ```
 # mkdir -p /srv/cran/cranroot
 # mkdir /srv/cran/www
-# chown -R cranadmin:cranadmin
+# chown -R cranadmin:cranadmin /srv/cran
 ```
 
 Copy `index.html` to `/srv/cran/www`.
